@@ -48,7 +48,7 @@ int mouseover_BUTTON(struct buttons button)
 {
 	int x, y;
 	SDL_GetMouseState(&x, &y);
-	printf("%d %d %d\n", x, y, ((x > button.x) && (x < button.x + button.w) && (y > button.y) && (y < button.y + button.h)));
+	// printf("%d %d %d\n", x, y, ((x > button.x) && (x < button.x + button.w) && (y > button.y) && (y < button.y + button.h)));
 	if ((x > button.x) && (x < button.x + button.w) && (y > button.y) && (y < button.y + button.h))
         return 1;
     else

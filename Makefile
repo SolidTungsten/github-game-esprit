@@ -1,7 +1,7 @@
-SRC_DIR = ../src
-OBJ_DIR = ../bin/debug
-RELEASE_DIR = ../bin/release
-INCLUDE_DIR = ../include
+SRC_DIR = ./src
+OBJ_DIR = ./bin/debug
+RELEASE_DIR = ./bin/release
+INCLUDE_DIR = ./include
 CC = gcc
 
 SRC = $(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/**/*.c)
