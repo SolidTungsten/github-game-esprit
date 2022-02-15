@@ -94,7 +94,6 @@ int main(int argc, char* args[])
 	SDL_Surface* background = load_image("../../res/seaport.png");
 		
 	Mix_Music* music = load_music("../../res/Main Theme.mp3");
-	Mix_PlayMusic(music, -1);	// Play music
 
 	apply_surface(background, NULL, screen, 0, 0);	// Apply image to screen
 
@@ -177,11 +176,15 @@ int main(int argc, char* args[])
 		// 	apply_surface(message, NULL, screen, (SCREEN_WIDTH - message->w) / 2, (SCREEN_HEIGHT - message->h) / 2);			
 		// 	message = NULL;
 		// }
+		if (Mix_PlayingMusic() == 0)
+		if (Mix_PlayMusic(music, -1) == -1)	// Play music
+			printf("Music failed to play. Error: %s\n", Mix_GetError());	
 
 		apply_surface(icons, PLAY_BUTTON.clip, screen, PLAY_BUTTON.x, PLAY_BUTTON.y);
 		apply_surface(icons, OPTIONS_BUTTON.clip, screen, OPTIONS_BUTTON.x, OPTIONS_BUTTON.y);
 		apply_surface(icons, EXIT_BUTTON.clip, screen, EXIT_BUTTON.x, EXIT_BUTTON.y);
 
+			
 		// Update screen:
 		if (SDL_Flip(screen) == -1) {
 			printf("Screen failed to update. Error: %s\n", SDL_GetError());
