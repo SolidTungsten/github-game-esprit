@@ -127,12 +127,12 @@ int main(int argc, char* args[])
 	EXIT_BUTTON.x = EXIT_BUTTON.x - EXIT_BUTTON.w / 2;
 	EXIT_BUTTON.y = EXIT_BUTTON.y - EXIT_BUTTON.h / 2;
 
-	// init_button(&EXIT_BUTTON, 184, 6, 158, 67);
-
-	// apply_surface(icons, &clip[0], screen, icon.x, icon.y);
-	// apply_surface(icon.surface, &clips[3], screen, 184, 456);
-	// EXIT_BUTTON.clip = &clips[EXIT_BUTTON_MOUSEOVER];
-	// apply_surface(icon.surface, &clips[5], screen, EXIT_BUTTON.x, EXIT_BUTTON.y);
+	SDL_Rect* options_holder;
+	SDL_Rect options;
+	options.x = 422;
+	options.y = 0;
+	options.w = 682;
+	options.h = 694;
 
 	int quit = 0;
 	while (!quit) {
@@ -161,8 +161,12 @@ int main(int argc, char* args[])
 				if (event.type == SDL_MOUSEBUTTONDOWN) {
 					if (event.button.button == SDL_BUTTON_LEFT) {
 						if (mouseover_BUTTON(PLAY_BUTTON));
-							// PLAY_BUTTOOPTIONS_BUTTON.yN.clip = &clips[PLAY_BUTTON_MOUSEDOWN];
+							// TODO
 						
+						if (mouseover_BUTTON(OPTIONS_BUTTON)) {
+							SDL_Delay(300);
+							options_holder = &options;
+						}
 						else if (mouseover_BUTTON(EXIT_BUTTON)) {
 							quit = 1;
 						}	
@@ -183,7 +187,7 @@ int main(int argc, char* args[])
 		apply_surface(icons, PLAY_BUTTON.clip, screen, PLAY_BUTTON.x, PLAY_BUTTON.y);
 		apply_surface(icons, OPTIONS_BUTTON.clip, screen, OPTIONS_BUTTON.x, OPTIONS_BUTTON.y);
 		apply_surface(icons, EXIT_BUTTON.clip, screen, EXIT_BUTTON.x, EXIT_BUTTON.y);
-
+		apply_surface(icons, options_holder, screen, 0, 0);
 			
 		// Update screen:
 		if (SDL_Flip(screen) == -1) {

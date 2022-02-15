@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "button.h"
 
-void set_clips(SDL_Rect clips[6])
+void set_clips(SDL_Rect clips[])
 {
     clips[PLAY_BUTTON_MOUSEOUT].x = 1;
 	clips[PLAY_BUTTON_MOUSEOUT].y = 3;
