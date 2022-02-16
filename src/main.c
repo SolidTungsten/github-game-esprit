@@ -23,7 +23,7 @@ void init_all()
 	}
 
 	// Initialize SDL_mixer:
-    if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1) {
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) == -1) {
 		printf("Could not load sound: %s\n", SDL_GetError());
 		exit(4);
 	}
@@ -129,22 +129,40 @@ int main(int argc, char* args[])
 
 	SDL_Rect* options_holder;
 	SDL_Rect options;
-	options.x = 422;
+	options.x = 387;
 	options.y = 0;
-	options.w = 682;
-	options.h = 694;
+	options.w = 821;
+	options.h = 654;
+	
+	Mix_Chunk* chunk_test = NULL;
+	chunk_test = Mix_LoadWAV("../../res/Menu_Tick.wav");
 
+	if (chunk_test == NULL) {
+		printf("Chunk failed to load. Error: %s\n", SDL_GetError());
+		exit(1);
+	}
+
+	int check = 0; int repeatonce = 1;
 	int quit = 0;
+	
 	while (!quit) {
-		while (SDL_PollEvent(&event)) {
+		if (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT)	
 				quit = 1;
 			else {
 				if (event.type == SDL_MOUSEMOTION) {	// Check mouse motion
-					if (mouseover_BUTTON(PLAY_BUTTON))	// Play button
+					if (mouseover_BUTTON(PLAY_BUTTON)) {	// Play button
 						PLAY_BUTTON.clip = &clips[PLAY_BUTTON_MOUSEOVER];
-					else 
+						if (check == 0) {
+							check = 1;
+						}
+					}
+					else {
+						printf("something\n");
 						PLAY_BUTTON.clip = &clips[PLAY_BUTTON_MOUSEOUT];
+						check = 0;
+						repeatonce = 1;
+					}
 					
 					if (mouseover_BUTTON(OPTIONS_BUTTON))
 						OPTIONS_BUTTON.clip = &clips[OPTIONS_BUTTON_MOUSEOVER];
@@ -180,25 +198,37 @@ int main(int argc, char* args[])
 		// 	apply_surface(message, NULL, screen, (SCREEN_WIDTH - message->w) / 2, (SCREEN_HEIGHT - message->h) / 2);			
 		// 	message = NULL;
 		// }
+		
+		Mix_AllocateChannels(16);
 		if (Mix_PlayingMusic() == 0)
 		if (Mix_PlayMusic(music, -1) == -1)	// Play music
 			printf("Music failed to play. Error: %s\n", Mix_GetError());	
 
+		if (check == 1 && repeatonce == 1) {
+			if (Mix_PlayChannel(-1, chunk_test, 0) == -1) 
+				printf("Chunk failed to play. Error: %s\n", SDL_GetError());
+			repeatonce = 0;
+			
+		}
+
 		apply_surface(icons, PLAY_BUTTON.clip, screen, PLAY_BUTTON.x, PLAY_BUTTON.y);
 		apply_surface(icons, OPTIONS_BUTTON.clip, screen, OPTIONS_BUTTON.x, OPTIONS_BUTTON.y);
 		apply_surface(icons, EXIT_BUTTON.clip, screen, EXIT_BUTTON.x, EXIT_BUTTON.y);
-		apply_surface(icons, options_holder, screen, 0, 0);
+		apply_surface(icons, options_holder, screen, 442, 53);
 			
 		// Update screen:
 		if (SDL_Flip(screen) == -1) {
 			printf("Screen failed to update. Error: %s\n", SDL_GetError());
 			exit(1);
 		}
+
+		// Mix_CloseAudio();
 	}
 
 	SDL_FreeSurface(background);
 	// SDL_FreeSurface(message);
 	Mix_FreeMusic(music);
+	Mix_FreeChunk(chunk_test);
 	// TTF_CloseFont(font);
 	SDL_Quit();	
 			
