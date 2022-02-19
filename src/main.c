@@ -98,7 +98,9 @@ int main(int argc, char* args[])
 	apply_surface(background, NULL, screen, 0, 0);	// Apply image to screen
 
 	// struct image icon = {"../../res/icons.png", NULL, 100, 100};
-	SDL_Surface* icons = load_image("../../res/Buttons.png");	
+	SDL_Surface* icons = load_image("../../res/Buttons.png");
+	if (SDL_SetAlpha(icons, SDL_SRCALPHA, 0) == 0)
+		printf("An error has occured.\n");	
 
 	SDL_Rect clips[100];
 
@@ -113,9 +115,9 @@ int main(int argc, char* args[])
 	struct buttons OPTIONS_BUTTON;
 	struct buttons EXIT_BUTTON;
 
-	init_button(&PLAY_BUTTON, 218, 419, 105, 33); 
-	init_button(&OPTIONS_BUTTON, 218, PLAY_BUTTON.y + PLAY_BUTTON.h + 33, 176, 33);
-	init_button(&EXIT_BUTTON, 218, OPTIONS_BUTTON.y + OPTIONS_BUTTON.h + 33, 96, 33);
+	init_button(&PLAY_BUTTON, 218, 419, 76, 22); 
+	init_button(&OPTIONS_BUTTON, 218, PLAY_BUTTON.y + PLAY_BUTTON.h + 22, 136, 22);
+	init_button(&EXIT_BUTTON, 218, OPTIONS_BUTTON.y + OPTIONS_BUTTON.h + 22, 74, 22);
 
 	// Set center positions	
 	PLAY_BUTTON.x = PLAY_BUTTON.x - PLAY_BUTTON.w / 2;
@@ -129,10 +131,10 @@ int main(int argc, char* args[])
 
 	SDL_Rect* options_holder;
 	SDL_Rect options;
-	options.x = 387;
+	options.x = 345;
 	options.y = 0;
-	options.w = 821;
-	options.h = 654;
+	options.w = 508;
+	options.h = 349;
 	
 	Mix_Chunk* chunk_test = NULL;
 	chunk_test = Mix_LoadWAV("../../res/Menu_Tick.wav");
@@ -142,6 +144,7 @@ int main(int argc, char* args[])
 		exit(1);
 	}
 
+	
 	int check = 0; int repeatonce = 1;
 	int quit = 0;
 	
@@ -158,7 +161,6 @@ int main(int argc, char* args[])
 						}
 					}
 					else {
-						printf("something\n");
 						PLAY_BUTTON.clip = &clips[PLAY_BUTTON_MOUSEOUT];
 						check = 0;
 						repeatonce = 1;
@@ -199,6 +201,7 @@ int main(int argc, char* args[])
 		// 	message = NULL;
 		// }
 		
+		
 		Mix_AllocateChannels(16);
 		if (Mix_PlayingMusic() == 0)
 		if (Mix_PlayMusic(music, -1) == -1)	// Play music
@@ -211,6 +214,7 @@ int main(int argc, char* args[])
 			
 		}
 
+		apply_surface(background, NULL, screen, 0, 0);
 		apply_surface(icons, PLAY_BUTTON.clip, screen, PLAY_BUTTON.x, PLAY_BUTTON.y);
 		apply_surface(icons, OPTIONS_BUTTON.clip, screen, OPTIONS_BUTTON.x, OPTIONS_BUTTON.y);
 		apply_surface(icons, EXIT_BUTTON.clip, screen, EXIT_BUTTON.x, EXIT_BUTTON.y);
