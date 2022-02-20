@@ -93,7 +93,7 @@ int main(int argc, char* args[])
 	// struct image background = {"../../res/seaport.png", NULL, 0, 0};
 	SDL_Surface* background = load_image("../../res/seaport.png");
 		
-	Mix_Music* music = load_music("../../res/Main Theme.mp3");
+	Mix_Music* music = load_music("../../res/mainTheme.mp3");
 
 	apply_surface(background, NULL, screen, 0, 0);	// Apply image to screen
 
