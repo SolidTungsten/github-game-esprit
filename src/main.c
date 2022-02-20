@@ -5,10 +5,7 @@
 #include <SDL/SDL_ttf.h>
 #include "image.h"
 #include "button.h"
-
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
-const int BIT = 32;
+#include "screen.h"
 
 void init_all()
 {
@@ -27,19 +24,6 @@ void init_all()
 		printf("Could not load sound: %s\n", SDL_GetError());
 		exit(4);
 	}
-}
-
-SDL_Surface* set_screen()
-{
-	SDL_Surface* screen = NULL;
-	screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, BIT, SDL_SWSURFACE);
-
-	if (screen == NULL) {
-		printf("Could not set screen: %s\n", SDL_GetError());
-		exit(1);
-	}
-
-	return screen;
 }
 
 Mix_Music* load_music(const char* filename)
@@ -87,7 +71,7 @@ int main(int argc, char* args[])
 {
 	init_all();
 	
-	SDL_Surface* screen = set_screen();
+	SDL_Surface* screen = setScreen();
     SDL_WM_SetCaption("Menu", NULL);	// Set the window caption
 
 	// struct image background = {"../../res/seaport.png", NULL, 0, 0};
@@ -147,7 +131,7 @@ int main(int argc, char* args[])
 	
 	int check = 0; int repeatonce = 1;
 	int quit = 0;
-	
+	int windowed = 0;
 	while (!quit) {
 		if (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT)	
@@ -192,6 +176,22 @@ int main(int argc, char* args[])
 						}	
 					}
 				}
+
+				if ((event.type == SDL_KEYDOWN) && (event.key.keysym.sym == SDLK_f)) {
+					if (windowed) {
+						screen = toggleWindowFullscreen();
+						windowed = 0;
+					}
+					else {
+						screen = setScreen();
+						windowed = 1;
+					}
+				}
+
+				// if (event.type == SDL_VIDEORESIZE) {
+				// 	// Resize the screen
+				// 	screen = SDL_SetVideoMode(event.resize.w, event.resize.h, BIT, SDL_SWSURFACE | SDL_RESIZABLE);
+				// }
 			}
 
 		}
@@ -218,7 +218,7 @@ int main(int argc, char* args[])
 		apply_surface(icons, PLAY_BUTTON.clip, screen, PLAY_BUTTON.x, PLAY_BUTTON.y);
 		apply_surface(icons, OPTIONS_BUTTON.clip, screen, OPTIONS_BUTTON.x, OPTIONS_BUTTON.y);
 		apply_surface(icons, EXIT_BUTTON.clip, screen, EXIT_BUTTON.x, EXIT_BUTTON.y);
-		apply_surface(icons, options_holder, screen, 442, 53);
+		apply_surface(icons, options_holder, screen, 386, 185);
 			
 		// Update screen:
 		if (SDL_Flip(screen) == -1) {
