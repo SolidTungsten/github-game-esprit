@@ -113,7 +113,7 @@ int main(int argc, char* args[])
 	EXIT_BUTTON.x = EXIT_BUTTON.x - EXIT_BUTTON.w / 2;
 	EXIT_BUTTON.y = EXIT_BUTTON.y - EXIT_BUTTON.h / 2;
 
-	SDL_Rect* options_holder;
+	SDL_Rect* options_holder = NULL;
 	SDL_Rect options;
 	options.x = 345;
 	options.y = 0;
@@ -132,6 +132,7 @@ int main(int argc, char* args[])
 	int check = 0; int repeatonce = 1;
 	int quit = 0;
 	int windowed = 0;
+	int options_show = 0;
 	while (!quit) {
 		if (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT)	
@@ -164,16 +165,28 @@ int main(int argc, char* args[])
 
 				if (event.type == SDL_MOUSEBUTTONDOWN) {
 					if (event.button.button == SDL_BUTTON_LEFT) {
+						int x, y;
+						SDL_GetMouseState(&x, &y);
+
 						if (mouseover_BUTTON(PLAY_BUTTON));
 							// TODO
 						
 						if (mouseover_BUTTON(OPTIONS_BUTTON)) {
 							SDL_Delay(300);
 							options_holder = &options;
+							options_show = 1;
 						}
+
+						printf("%d\n", (x > 407) && (x < 26) && (y > 197) && (y < 18));
+						if ((x > 407) && (x < 407 + 26) && (y > 197) && (y < 197 + 18)) {
+							SDL_Delay(300);
+							options_show = 0;
+						}	
+
 						else if (mouseover_BUTTON(EXIT_BUTTON)) {
 							quit = 1;
-						}	
+						}
+
 					}
 				}
 
@@ -218,8 +231,11 @@ int main(int argc, char* args[])
 		apply_surface(icons, PLAY_BUTTON.clip, screen, PLAY_BUTTON.x, PLAY_BUTTON.y);
 		apply_surface(icons, OPTIONS_BUTTON.clip, screen, OPTIONS_BUTTON.x, OPTIONS_BUTTON.y);
 		apply_surface(icons, EXIT_BUTTON.clip, screen, EXIT_BUTTON.x, EXIT_BUTTON.y);
-		apply_surface(icons, options_holder, screen, 386, 185);
-			
+		
+		if (options_show) {
+			apply_surface(icons, options_holder, screen, 386, 185);
+		}
+		
 		// Update screen:
 		if (SDL_Flip(screen) == -1) {
 			printf("Screen failed to update. Error: %s\n", SDL_GetError());
