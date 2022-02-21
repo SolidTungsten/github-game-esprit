@@ -78,7 +78,7 @@ int main(int argc, char* args[])
 	SDL_Surface* background = load_image("../../res/seaport.png");
 	SDL_Surface* icons = load_image("../../res/Buttons.png");
 	SDL_Surface* cursor_image = load_image("../../res/Cursor_Sword.png");
-	SDL_Surface* background2 = load_image("../../background2.png");
+	SDL_Surface* background2 = load_image("../../res/castle.png");
 		
 	Mix_Music* music = load_music("../../res/mainTheme.mp3");
 
@@ -212,6 +212,7 @@ int main(int argc, char* args[])
 	int windowed = 0;
 	int options_show = 0;
 	int fullscreen_show = 0;
+	int show_background2 = 0;
 	while (!quit) {
 		startTimer(&fps);	// Start the timer
 
@@ -255,7 +256,10 @@ int main(int argc, char* args[])
 						cursor_y = y;
 
 						if (mouseover_BUTTON(PLAY_BUTTON));
-							// TODO
+							if (!show_background2)
+								show_background2 = 1;
+							else
+								show_background2 = 0;
 						
 						if (mouseover_BUTTON(OPTIONS_BUTTON)) {
 							SDL_Delay(300);
@@ -380,7 +384,8 @@ int main(int argc, char* args[])
 		// Flag:
 		apply_surface(icons, &flag[flag_frame], screen, 697, 431);
 		
-
+		if (show_background2)
+			apply_surface(background2, NULL, screen, 0, 0);
 
 		if (options_show) {
 			apply_surface(icons, options_holder, screen, options_holder_x, options_holder_y);
