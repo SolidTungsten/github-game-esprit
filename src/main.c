@@ -78,6 +78,7 @@ int main(int argc, char* args[])
 	SDL_Surface* background = load_image("../../res/seaport.png");
 	SDL_Surface* icons = load_image("../../res/Buttons.png");
 	SDL_Surface* cursor_image = load_image("../../res/Cursor_Sword.png");
+	SDL_Surface* background2 = load_image("../../background2.png");
 		
 	Mix_Music* music = load_music("../../res/mainTheme.mp3");
 
@@ -177,6 +178,12 @@ int main(int argc, char* args[])
 	volume_bump[0].y = 165;
 	volume_bump[0].w = 31;
 	volume_bump[0].h = 27;
+
+	SDL_Rect logo[1];
+	logo[0].x = 0;
+	logo[0].y = 505;
+	logo[0].w = 380;
+	logo[0].h = 314;
 	
 	
 	Mix_Chunk* chunk_test = NULL;
@@ -359,6 +366,7 @@ int main(int argc, char* args[])
 			SDL_ShowCursor(SDL_DISABLE);
 
 		apply_surface(background, NULL, screen, 0, 0);
+		apply_surface(icons, &logo[0], screen, 40, 40);
 		apply_surface(icons, PLAY_BUTTON.clip, screen, PLAY_BUTTON.x, PLAY_BUTTON.y);
 		apply_surface(icons, OPTIONS_BUTTON.clip, screen, OPTIONS_BUTTON.x, OPTIONS_BUTTON.y);
 		apply_surface(icons, EXIT_BUTTON.clip, screen, EXIT_BUTTON.x, EXIT_BUTTON.y);
