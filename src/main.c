@@ -287,6 +287,9 @@ int main(int argc, char* args[])
 						Mix_VolumeMusic(Mix_VolumeMusic(-1) - MIX_MAX_VOLUME/9);
 				}
 
+				if ((event.type == SDL_KEYDOWN) && (event.key.keysym.sym == SDLK_ESCAPE))
+					quit = 1;
+
 				// if (event.type == SDL_VIDEORESIZE) {
 				// 	// Resize the screen
 				// 	screen = SDL_SetVideoMode(event.resize.w, event.resize.h, BIT, SDL_SWSURFACE | SDL_RESIZABLE);
