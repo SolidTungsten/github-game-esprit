@@ -6,6 +6,7 @@
 #include "image.h"
 #include "button.h"
 #include "screen.h"
+#include "framerate.h"
 
 void init_all()
 {
@@ -119,6 +120,23 @@ int main(int argc, char* args[])
 	options.y = 0;
 	options.w = 508;
 	options.h = 349;
+
+
+	// Animation:
+	struct Timer fps;
+
+	unsigned int frame = 0;
+
+	SDL_Rect seagull[2];
+	seagull[0].x = 0;
+	seagull[0].y = 139;
+	seagull[0].w = 25;
+	seagull[0].h = 24;
+	seagull[1].x = 25;
+	seagull[1].y = 139;
+	seagull[1].w = 25;
+	seagull[1].h = 24;
+	
 	
 	Mix_Chunk* chunk_test = NULL;
 	chunk_test = Mix_LoadWAV("../../res/Menu_Tick.wav");
@@ -134,7 +152,9 @@ int main(int argc, char* args[])
 	int windowed = 0;
 	int options_show = 0;
 	while (!quit) {
-		if (SDL_PollEvent(&event)) {
+		startTimer(&fps);	// Start the timer
+
+		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT)	
 				quit = 1;
 			else {
@@ -160,6 +180,8 @@ int main(int argc, char* args[])
 						EXIT_BUTTON.clip = &clips[EXIT_BUTTON_MOUSEOVER];
 					else
 						EXIT_BUTTON.clip = &clips[EXIT_BUTTON_MOUSEOUT];
+
+					
 
 				}
 
@@ -227,11 +249,24 @@ int main(int argc, char* args[])
 			
 		}
 
+		++frame;
+
+		if (frame > 1)
+			frame = 0;
+
 		apply_surface(background, NULL, screen, 0, 0);
 		apply_surface(icons, PLAY_BUTTON.clip, screen, PLAY_BUTTON.x, PLAY_BUTTON.y);
 		apply_surface(icons, OPTIONS_BUTTON.clip, screen, OPTIONS_BUTTON.x, OPTIONS_BUTTON.y);
 		apply_surface(icons, EXIT_BUTTON.clip, screen, EXIT_BUTTON.x, EXIT_BUTTON.y);
+
+		// Seagulls:
+		apply_surface(icons, &seagull[frame], screen, 922, 105);
+		apply_surface(icons, &seagull[frame], screen, 866, 174);
+		apply_surface(icons, &seagull[frame], screen, 1105, 143);
+		apply_surface(icons, &seagull[frame], screen, 1229, 193);
 		
+
+
 		if (options_show) {
 			apply_surface(icons, options_holder, screen, 386, 185);
 		}
@@ -243,6 +278,12 @@ int main(int argc, char* args[])
 		}
 
 		// Mix_CloseAudio();
+
+		//Cap the frame rate
+        if( get_ticksTimer(&fps) < 1000 / FRAMES_PER_SECOND )
+        {
+            SDL_Delay( ( 1000 / FRAMES_PER_SECOND ) - get_ticksTimer(&fps) );
+        }
 	}
 
 	SDL_FreeSurface(background);
