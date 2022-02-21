@@ -75,17 +75,16 @@ int main(int argc, char* args[])
 	SDL_Surface* screen = setScreen();
     SDL_WM_SetCaption("Menu", NULL);	// Set the window caption
 
-	// struct image background = {"../../res/seaport.png", NULL, 0, 0};
 	SDL_Surface* background = load_image("../../res/seaport.png");
+	SDL_Surface* icons = load_image("../../res/Buttons.png");
+	SDL_Surface* cursor_image = load_image("../../res/Cursor_Sword.png");
 		
 	Mix_Music* music = load_music("../../res/mainTheme.mp3");
 
 	apply_surface(background, NULL, screen, 0, 0);	// Apply image to screen
 
-	// struct image icon = {"../../res/icons.png", NULL, 100, 100};
-	SDL_Surface* icons = load_image("../../res/Buttons.png");
-	if (SDL_SetAlpha(icons, SDL_SRCALPHA, 0) == 0)
-		printf("An error has occured.\n");	
+	SDL_ShowCursor(SDL_ENABLE);
+
 
 	SDL_Rect clips[100];
 
@@ -122,12 +121,18 @@ int main(int argc, char* args[])
 	options.h = 349;
 	int options_holder_x = (SCREEN_WIDTH - options.w) / 2;
 	int options_holder_y = (SCREEN_HEIGHT - options.h) / 2;
-
+	int cursor_x = 0;
+	int cursor_y = 0;
 
 	// Animation:
 	struct Timer fps;
+	struct Timer delta;
+	struct Timer delta2;
+	startTimer(&delta);
+	startTimer(&delta2);
 
 	unsigned int frame = 0;
+	unsigned int frame2 = 1;
 
 	SDL_Rect seagull[2];
 	seagull[0].x = 0;
@@ -138,6 +143,34 @@ int main(int argc, char* args[])
 	seagull[1].y = 139;
 	seagull[1].w = 25;
 	seagull[1].h = 24;
+
+	SDL_Rect flag[6];
+	int flag_w = 120;
+	int flag_frame = 0;
+	flag[0].x = 0;
+	flag[0].y = 366;
+	flag[0].w = 120;
+	flag[0].h = 50;
+
+	flag[1].x = 119;
+	flag[1].y = 366;
+	flag[1].w = 120;
+	flag[1].h = 50;
+
+	flag[2].x = 247;
+	flag[2].y = 366;
+	flag[2].w = 120;
+	flag[2].h = 50;
+
+	flag[3].x = 382;
+	flag[3].y = 366;
+	flag[3].w = 120;
+	flag[3].h = 50;
+
+	flag[4].x = 634;
+	flag[4].y = 366;
+	flag[4].w = 120;
+	flag[4].h = 50;
 
 	SDL_Rect volume_bump[1];
 	volume_bump[0].x = 0;
@@ -196,6 +229,9 @@ int main(int argc, char* args[])
 					if (event.button.button == SDL_BUTTON_LEFT) {
 						int x, y;
 						SDL_GetMouseState(&x, &y);
+
+						cursor_x = x;
+						cursor_y = y;
 
 						if (mouseover_BUTTON(PLAY_BUTTON));
 							// TODO
@@ -271,13 +307,28 @@ int main(int argc, char* args[])
 			if (Mix_PlayChannel(-1, chunk_test, 0) == -1) 
 				printf("Chunk failed to play. Error: %s\n", SDL_GetError());
 			repeatonce = 0;
-			
 		}
 
-		++frame;
+		if (get_ticksTimer(&delta2) > 200) {
+			++flag_frame;
+			startTimer(&delta2);
+		}
+
+		if (get_ticksTimer(&delta) > 500) {
+			++frame;
+			++frame2;
+			startTimer(&delta);	// Reset timer
+		}
 
 		if (frame > 1)
 			frame = 0;
+		if (frame2 > 1)
+			frame2 = 0;
+		if (flag_frame > 4)
+			flag_frame = 0;
+
+		if (SDL_ShowCursor(SDL_QUERY) == SDL_ENABLE)
+			SDL_ShowCursor(SDL_DISABLE);
 
 		apply_surface(background, NULL, screen, 0, 0);
 		apply_surface(icons, PLAY_BUTTON.clip, screen, PLAY_BUTTON.x, PLAY_BUTTON.y);
@@ -286,9 +337,12 @@ int main(int argc, char* args[])
 
 		// Seagulls:
 		apply_surface(icons, &seagull[frame], screen, 922, 105);
-		apply_surface(icons, &seagull[frame], screen, 866, 174);
+		apply_surface(icons, &seagull[frame2], screen, 866, 174);
 		apply_surface(icons, &seagull[frame], screen, 1105, 143);
-		apply_surface(icons, &seagull[frame], screen, 1229, 193);
+		apply_surface(icons, &seagull[frame2], screen, 1229, 193);
+
+		// Flag:
+		apply_surface(icons, &flag[flag_frame], screen, 697, 431);
 		
 
 
@@ -300,20 +354,19 @@ int main(int argc, char* args[])
 			int volume_y = options_holder_y + 98;
 			int volume_width = 0;
 
-			int number = 0;
-			printf("volume: %d\n", volume);
 			while (volume > 0) {
 				
 				apply_surface(icons, &volume_bump[0], screen, volume_x + volume_width, volume_y);
 
 				volume_width += volume_bump->w;
 				volume -= MIX_MAX_VOLUME/9;
-
-				++number;
 			}
-
-			printf("%d\n", number);
 		}
+
+		// Change cursor:
+		int x, y;
+		SDL_GetMouseState(&x, &y);
+		apply_surface(cursor_image, NULL, screen, x, y);
 		
 		// Update screen:
 		if (SDL_Flip(screen) == -1) {
@@ -322,7 +375,6 @@ int main(int argc, char* args[])
 		}
 
 		// Mix_CloseAudio();
-
 		//Cap the frame rate
         if( get_ticksTimer(&fps) < 1000 / FRAMES_PER_SECOND )
         {

@@ -1,7 +1,7 @@
 #ifndef FRAMERATE_H
 #define FRAMERATE_H
 
-#define FRAMES_PER_SECOND 5
+#define FRAMES_PER_SECOND 60
 
 struct Timer {
     int startTicks;
