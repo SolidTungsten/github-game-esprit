@@ -187,6 +187,9 @@ int main(int argc, char* args[])
 		exit(1);
 	}
 
+	if (Mix_PlayMusic(music, -1) == -1)	// Play music
+			printf("Music failed to play. Error: %s\n", Mix_GetError());
+
 	int check = 0; int repeatonce = 1;
 	int quit = 0;
 	int windowed = 0;
@@ -299,7 +302,7 @@ int main(int argc, char* args[])
 		
 		
 		Mix_AllocateChannels(16);
-		if (Mix_PlayingMusic() == 0)
+		// if (Mix_PlayingMusic() == 0)
 		if (Mix_PlayMusic(music, -1) == -1)	// Play music
 			printf("Music failed to play. Error: %s\n", Mix_GetError());	
 
@@ -383,6 +386,8 @@ int main(int argc, char* args[])
 	}
 
 	SDL_FreeSurface(background);
+	SDL_FreeSurface(icons);
+	SDL_FreeSurface(cursor_image);
 	// SDL_FreeSurface(message);
 	Mix_FreeMusic(music);
 	Mix_FreeChunk(chunk_test);
