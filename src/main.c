@@ -58,9 +58,9 @@ SDL_Surface* render_text(TTF_Font* font, const char* text, Uint8 r, Uint8 g, Uin
 {
 	SDL_Surface* message = NULL;
 	SDL_Color color = {r, g, b};
-
+	
 	message = TTF_RenderText_Solid(font, text, color);
-
+	printf("...\n");
 	if (message == NULL) {
 		printf("text failed to render. Error: %s\n", TTF_GetError());
 	}
@@ -190,10 +190,21 @@ int main(int argc, char* args[])
 	if (Mix_PlayMusic(music, -1) == -1)	// Play music
 			printf("Music failed to play. Error: %s\n", Mix_GetError());
 
+	SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 0, 0, 0));
+	TTF_Font* font = NULL;
+	SDL_Surface* message = NULL;
+	font = load_font("../../res/pixelmix.ttf", 28);
+	message = render_text(font, "LOADING...", 255, 255, 255);
+	apply_surface(message, NULL, screen, (SCREEN_WIDTH - message->w) / 2, (SCREEN_HEIGHT - message->h) / 2);
+
+	SDL_Flip(screen);
+	SDL_Delay(10000);
+
 	int check = 0; int repeatonce = 1;
 	int quit = 0;
 	int windowed = 0;
 	int options_show = 0;
+	int fullscreen_show = 0;
 	while (!quit) {
 		startTimer(&fps);	// Start the timer
 
@@ -261,6 +272,19 @@ int main(int argc, char* args[])
 							Mix_VolumeMusic(Mix_VolumeMusic(-1) + MIX_MAX_VOLUME/9);
 						}
 
+						if ((x > options_holder_x+352) && (x < options_holder_x+352+volume_bump->w) &&
+							(y > options_holder_y+212) && (y < options_holder_y+212+volume_bump->h)) {
+							
+							if (!fullscreen_show) {
+								fullscreen_show = 1;
+								screen = toggleWindowFullscreen();
+							}
+							else {
+								fullscreen_show = 0;
+								screen = setScreen();
+							}
+						}
+
 						if (mouseover_BUTTON(EXIT_BUTTON)) {
 							quit = 1;
 						}
@@ -306,8 +330,6 @@ int main(int argc, char* args[])
 		
 		Mix_AllocateChannels(16);
 		// if (Mix_PlayingMusic() == 0)
-		if (Mix_PlayMusic(music, -1) == -1)	// Play music
-			printf("Music failed to play. Error: %s\n", Mix_GetError());	
 
 		if (check == 1 && repeatonce == 1) {
 			if (Mix_PlayChannel(-1, chunk_test, 0) == -1) 
@@ -367,6 +389,9 @@ int main(int argc, char* args[])
 				volume_width += volume_bump->w;
 				volume -= MIX_MAX_VOLUME/9;
 			}
+
+			if (fullscreen_show)
+				apply_surface(icons, &volume_bump[0], screen, options_holder_x+352, options_holder_y+212);
 		}
 
 		// Change cursor:
@@ -391,10 +416,10 @@ int main(int argc, char* args[])
 	SDL_FreeSurface(background);
 	SDL_FreeSurface(icons);
 	SDL_FreeSurface(cursor_image);
-	// SDL_FreeSurface(message);
+	SDL_FreeSurface(message);
 	Mix_FreeMusic(music);
 	Mix_FreeChunk(chunk_test);
-	// TTF_CloseFont(font);
+	TTF_CloseFont(font);
 	SDL_Quit();	
 			
 	return 0;
