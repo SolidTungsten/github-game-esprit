@@ -120,6 +120,8 @@ int main(int argc, char* args[])
 	options.y = 0;
 	options.w = 508;
 	options.h = 349;
+	int options_holder_x = (SCREEN_WIDTH - options.w) / 2;
+	int options_holder_y = (SCREEN_HEIGHT - options.h) / 2;
 
 
 	// Animation:
@@ -136,6 +138,12 @@ int main(int argc, char* args[])
 	seagull[1].y = 139;
 	seagull[1].w = 25;
 	seagull[1].h = 24;
+
+	SDL_Rect volume_bump[1];
+	volume_bump[0].x = 0;
+	volume_bump[0].y = 165;
+	volume_bump[0].w = 31;
+	volume_bump[0].h = 27;
 	
 	
 	Mix_Chunk* chunk_test = NULL;
@@ -146,7 +154,6 @@ int main(int argc, char* args[])
 		exit(1);
 	}
 
-	
 	int check = 0; int repeatonce = 1;
 	int quit = 0;
 	int windowed = 0;
@@ -199,13 +206,23 @@ int main(int argc, char* args[])
 							options_show = 1;
 						}
 
-						printf("%d\n", (x > 407) && (x < 26) && (y > 197) && (y < 18));
-						if ((x > 407) && (x < 407 + 26) && (y > 197) && (y < 197 + 18)) {
+						if ((x > 407) && (x < 407 + 26) && (y > 197) && (y < 197 + 18)) {	// OPTIONS button
 							SDL_Delay(300);
 							options_show = 0;
-						}	
+						}
+						
+						if ((x > options_holder_x+40) && (x < options_holder_x+40+volume_bump->w) &&
+							(y > options_holder_y+97) && (y < options_holder_y+97+volume_bump->h)) {
 
-						else if (mouseover_BUTTON(EXIT_BUTTON)) {
+							Mix_VolumeMusic(Mix_VolumeMusic(-1) - MIX_MAX_VOLUME/9);
+						}
+						else if (((x > options_holder_x+418) && (x < options_holder_x+418+volume_bump->w) &&
+								(y > options_holder_y+97) && (y < options_holder_y+97+volume_bump->h))) {
+
+							Mix_VolumeMusic(Mix_VolumeMusic(-1) + MIX_MAX_VOLUME/9);
+						}
+
+						if (mouseover_BUTTON(EXIT_BUTTON)) {
 							quit = 1;
 						}
 
@@ -221,6 +238,14 @@ int main(int argc, char* args[])
 						screen = setScreen();
 						windowed = 1;
 					}
+				}
+
+				if ((event.type == SDL_KEYDOWN)) {
+					if (event.key.keysym.sym == SDLK_0) 
+						Mix_VolumeMusic(Mix_VolumeMusic(-1) + MIX_MAX_VOLUME/9);
+					
+					else if (event.key.keysym.sym == SDLK_9) 
+						Mix_VolumeMusic(Mix_VolumeMusic(-1) - MIX_MAX_VOLUME/9);
 				}
 
 				// if (event.type == SDL_VIDEORESIZE) {
@@ -268,7 +293,26 @@ int main(int argc, char* args[])
 
 
 		if (options_show) {
-			apply_surface(icons, options_holder, screen, 386, 185);
+			apply_surface(icons, options_holder, screen, options_holder_x, options_holder_y);
+
+			int volume = Mix_VolumeMusic(-1);
+			int volume_x = options_holder_x + 89;
+			int volume_y = options_holder_y + 98;
+			int volume_width = 0;
+
+			int number = 0;
+			printf("volume: %d\n", volume);
+			while (volume > 0) {
+				
+				apply_surface(icons, &volume_bump[0], screen, volume_x + volume_width, volume_y);
+
+				volume_width += volume_bump->w;
+				volume -= MIX_MAX_VOLUME/9;
+
+				++number;
+			}
+
+			printf("%d\n", number);
 		}
 		
 		// Update screen:
