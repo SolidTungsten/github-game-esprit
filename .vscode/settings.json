@@ -1,6 +1,9 @@
 {
     "files.associations": {
         "stdbool.h": "c",
-        "cmath": "c"
+        "cmath": "c",
+        "perso.h": "c",
+        "framerate.h": "c",
+        "image.h": "c"
     }
 }

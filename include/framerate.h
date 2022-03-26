@@ -10,7 +10,7 @@ struct Timer {
     int started;
 };
 
-void InitTimer(struct Timer* timer);
+void initTimer(struct Timer* timer);
 void startTimer(struct Timer* timer);
 void stopTimer(struct Timer* timer);
 void pauseTimer(struct Timer* timer);

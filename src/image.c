@@ -54,17 +54,17 @@ void apply_surface(SDL_Surface* source, SDL_Rect* clip, SDL_Surface* destination
 
 
 
-/*
-void remove_background(SDL_Surface* loaded_image, Uint8 r, Uint8 g, Uint8 b)
-{
-    Uint32 color_key = SDL_MapRGB(loaded_image->format, r, g, b);    // Map the color key
 
-    SDL_SetColorKey(loaded_image, SDL_SRCCOLORKEY, color_key);  // Make the color key transparent
-}
+// void remove_background(SDL_Surface* loaded_image, Uint8 r, Uint8 g, Uint8 b)
+// {
+//     Uint32 color_key = SDL_MapRGB(loaded_image->format, r, g, b);    // Map the color key
+
+//     SDL_SetColorKey(loaded_image, SDL_SRCCOLORKEY, color_key);  // Make the color key transparent
+// }
 
 void fill_screen_white(SDL_Surface* screen) 
 {
     SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF));
 }
-*/
+
 

@@ -2,7 +2,7 @@
 #include <SDL/SDL.h>
 #include <stdbool.h>
 
-void InitTimer(struct Timer* timer)
+void initTimer(struct Timer* timer)
 {
     // Initialize the variables
     timer->startTicks = 0;
