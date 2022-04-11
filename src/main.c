@@ -35,17 +35,18 @@ int main(int argc, char* args[])
     SDL_WM_SetCaption("Game", NULL);	// Set the window caption
 
 	// Game loop:
-	SDL_Event event, input_manager;
+	SDL_Event event;
 	struct Timer fps;	// Animation (TODO)
 
 	SDL_Flip(screen);
 
 	int x_vel = 0;
 	Perso p;
+	initialiserPerso(&p);
+	
 	Uint32 t_prev = 0, dt = 0;	// Initialize timers
 	t_prev = SDL_GetTicks();
 
-	initialiserPerso(&p);
 	int quit = 0;
 	while (!quit) {
 		startTimer(&fps);	// Start fps timer
@@ -61,16 +62,16 @@ int main(int argc, char* args[])
 		}
 
 		SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 0, 0, 0));	// Fill screen black
+		saut(&p, event);
 		deplacerPerso(&p, dt, event);
 		afficherPerso(p, screen);
-		printf("%lf %d %d\n", p.acceleration, p.x, dt);
+		printf("%lf %.2f %.2f %d %d %lf %d\n", p.acceleration, p.x, p.y, dt, p.keydown, p.vitesse, p.state);
 
 		// Update screen:
 		if (SDL_Flip(screen) == -1) {
 			printf("Screen failed to update. Error: %s\n", SDL_GetError());
 			exit(1);
 		}
-		
 
 		//Cap the frame rate
         if( get_ticksTimer(&fps) < 1000 / FRAMES_PER_SECOND )
