@@ -1,7 +1,7 @@
 #ifndef FRAMERATE_H
 #define FRAMERATE_H
 
-#define FRAMES_PER_SECOND 60
+#define FRAMES_PER_SECOND 30
 
 struct Timer {
     int startTicks;
@@ -18,6 +18,5 @@ void unpauseTimer(struct Timer* timer);
 int get_ticksTimer(struct Timer* timer);
 int is_startedTimer(struct Timer* timer);
 int is_pausedTimer(struct Timer* timer);
-
 
 #endif

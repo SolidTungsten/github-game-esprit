@@ -25,6 +25,8 @@ SDL_Rect** allocMatrix(int nRow, int nCol)
     return matrix;
 }
 
+void setClips(Perso* p);
+
 void initialiserPerso(Perso* p)
 {
     SDL_Surface* model = load_image("../../res/zoro.png");
@@ -34,11 +36,7 @@ void initialiserPerso(Perso* p)
     p->clips = allocMatrix(PERSO_MAX_STATES, PERSO_MAX_FRAMES);
     
     // Delete later, only testing:
-    p->clips[0][0].x = 10;
-    p->clips[0][0].y = 20;
-    p->clips[0][0].w = 40;
-    p->clips[0][0].h = 70;
-    p->clip = &p->clips[0][0];
+    setClips(p);
 
     // p->clips[0][0].x = 5;
     // p->clips[0][0].y = 1;
@@ -122,5 +120,79 @@ void saut(Perso* p, SDL_Event e)
 
 void animerPerso(Perso* p)
 {
+    if (p->accelerationY < 0)
+        p->state = STATE_JUMPING;
+    else if ((p->acceleration > 0) || (p->acceleration < 0))
+        p->state = STATE_RUNNING;
+    else
+        p->state = STATE_IDLE;
+
+    if (p->state == STATE_RUNNING) {
+        p->clip = &p->clips[STATE_RUNNING][p->frame];
+        ++p->frame;
+
+        if (p->frame > STATE_RUNNING_MAX_FRAMES)
+            p->frame = 0;
+    }
+    else if (p->state == STATE_JUMPING) {
+
+    }
+    else
+        p->clip = &p->clips[STATE_IDLE][0];
+}
+
+void setClips(Perso* p)
+{
+    p->clips[STATE_IDLE][0].x = 10;
+    p->clips[STATE_IDLE][0].y = 20;
+    p->clips[STATE_IDLE][0].w = 40;
+    p->clips[STATE_IDLE][0].h = 70;
+    p->clip = &p->clips[STATE_IDLE][0];
+    
+    p->clips[STATE_RUNNING][0].x = 250;
+    p->clips[STATE_RUNNING][0].y = 25;
+    p->clips[STATE_RUNNING][0].w = 51;
+    p->clips[STATE_RUNNING][0].h = 61;
+
+    p->clips[STATE_RUNNING][1].x = 309;
+    p->clips[STATE_RUNNING][1].y = 25;
+    p->clips[STATE_RUNNING][1].w = 51;
+    p->clips[STATE_RUNNING][1].h = 61;
+
+    p->clips[STATE_RUNNING][2].x = 370;
+    p->clips[STATE_RUNNING][2].y = 25;
+    p->clips[STATE_RUNNING][2].w = 51;
+    p->clips[STATE_RUNNING][2].h = 61;
+
+    p->clips[STATE_RUNNING][3].x = 432;
+    p->clips[STATE_RUNNING][3].y = 25;
+    p->clips[STATE_RUNNING][3].w = 51;
+    p->clips[STATE_RUNNING][3].h = 61;
+
+    p->clips[STATE_RUNNING][4].x = 492;
+    p->clips[STATE_RUNNING][4].y = 25;
+    p->clips[STATE_RUNNING][4].w = 51;
+    p->clips[STATE_RUNNING][4].h = 61;
+
+    p->clips[STATE_RUNNING][5].x = 556;
+    p->clips[STATE_RUNNING][5].y = 25;
+    p->clips[STATE_RUNNING][5].w = 53;
+    p->clips[STATE_RUNNING][5].h = 61;
+
+    p->clips[STATE_RUNNING][6].x = 556;
+    p->clips[STATE_RUNNING][6].y = 25;
+    p->clips[STATE_RUNNING][6].w = 51;
+    p->clips[STATE_RUNNING][6].h = 61;
+
+    p->clips[STATE_RUNNING][7].x = 622;
+    p->clips[STATE_RUNNING][7].y = 25;
+    p->clips[STATE_RUNNING][7].w = 56;
+    p->clips[STATE_RUNNING][7].h = 61;
+
+    p->clips[STATE_RUNNING][8].x = 692;
+    p->clips[STATE_RUNNING][8].y = 25;
+    p->clips[STATE_RUNNING][8].w = 56;
+    p->clips[STATE_RUNNING][8].h = 61;
+
     
 }

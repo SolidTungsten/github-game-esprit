@@ -27,12 +27,47 @@ void init_all()
 	}
 }
 
+TTF_Font* load_font(const char* filename, int size)
+{
+	// Font stuff:
+	TTF_Font* font = NULL;
+	font = TTF_OpenFont(filename, size);
+
+	if (font == NULL) {
+		printf("Font failed to load. Error: %s\n", TTF_GetError());
+		exit(1);
+	}
+
+	return font;
+}
+
+SDL_Surface* render_text(TTF_Font* font, const char* text, Uint8 r, Uint8 g, Uint8 b)
+{
+	SDL_Surface* message = NULL;
+	SDL_Color color = {r, g, b};
+	
+	message = TTF_RenderText_Solid(font, text, color);
+	if (message == NULL) {
+		printf("text failed to render. Error: %s\n", TTF_GetError());
+	}
+
+	return message;
+}
+
 int main(int argc, char* args[])
 {
 	init_all();
 	
 	SDL_Surface* screen = setScreen();
     SDL_WM_SetCaption("Game", NULL);	// Set the window caption
+
+	TTF_Font* font = NULL;
+	SDL_Surface* message = NULL;
+	font = load_font("../../res/pixelmix.ttf", 28);
+	char str[2];
+	int score = 0;
+	sprintf(str, "%d", score);
+	message = render_text(font, str, 255, 255, 255);
 
 	// Game loop:
 	SDL_Event event;
@@ -43,7 +78,7 @@ int main(int argc, char* args[])
 	int x_vel = 0;
 	Perso p;
 	initialiserPerso(&p);
-	
+
 	Uint32 t_prev = 0, dt = 0;	// Initialize timers
 	t_prev = SDL_GetTicks();
 
@@ -65,7 +100,9 @@ int main(int argc, char* args[])
 		saut(&p, event);
 		deplacerPerso(&p, dt, event);
 		afficherPerso(p, screen);
-		printf("%lf %.2f %.2f %d %d %lf %d\n", p.acceleration, p.x, p.y, dt, p.keydown, p.vitesse, p.state);
+		animerPerso(&p);
+		printf("%lf %.2f %.2f %d %d %lf %d %p\n", p.acceleration, p.x, p.y, dt, p.keydown, p.vitesse, p.state, p.clip);
+		apply_surface(message, NULL, screen, 0, 0);
 
 		// Update screen:
 		if (SDL_Flip(screen) == -1) {
